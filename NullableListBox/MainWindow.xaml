@@ -2,11 +2,102 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:NullableListBox"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="MainWindow"
+        Width="206.722"
+        Height="350"
+        DataContext="{Binding ViewModel}"
+        mc:Ignorable="d">
+  <Window.Resources>
+
+    <Style x:Key="ActionLinkButton" TargetType="{x:Type Button}">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Focusable" Value="True" />
+      <Setter Property="Foreground" Value="Blue" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <TextBlock>
+              <Hyperlink Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Foreground="{TemplateBinding Foreground}">
+                <Hyperlink.Resources>
+                  <Style TargetType="{x:Type Hyperlink}">
+                    <Style.Triggers>
+                      <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                          <Condition Property="UIElement.IsMouseOver" Value="false" />
+                          <Condition Property="IsEnabled" Value="true" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                          <Setter Property="TextDecorations" Value="None" />
+                          <Setter Property="FrameworkElement.Cursor" Value="None" />
+                        </MultiTrigger.Setters>
+                      </MultiTrigger>
+                      <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                          <Condition Property="IsMouseOver" Value="true" />
+                          <Condition Property="IsEnabled" Value="true" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                          <Setter Property="TextDecorations" Value="Underline" />
+                          <Setter Property="FrameworkElement.Cursor" Value="Hand" />
+                        </MultiTrigger.Setters>
+                      </MultiTrigger>
+                      <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                          <Condition Property="IsEnabled" Value="false" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                          <Setter Property="TextDecorations" Value="None" />
+                        </MultiTrigger.Setters>
+                      </MultiTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Hyperlink.Resources>
+                <Run Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
+              </Hyperlink>
+            </TextBlock>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+  </Window.Resources>
+
+  <DockPanel>
+
+    <Button DockPanel.Dock="Top" x:Name="userbutton" Style="{StaticResource ActionLinkButton}" Content="{Binding SelectedUser, Converter={local:DefaultValueConverter}, ConverterParameter=Users}">
+      <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click">
+          <local:OpenPopupAction TargetName="userPopup" />
+        </i:EventTrigger>
+      </i:Interaction.Triggers>
+    </Button>
+
+    <Popup x:Name="userPopup"
+           AllowsTransparency="True"
+           Placement="Bottom"
+           PlacementTarget="{Binding ElementName=userbutton}"
+           StaysOpen="False">
+      <ListBox SelectedItem="{Binding SelectedUser}">
+        <ListBox.ItemsSource>
+          <MultiBinding Converter="{local:MultiBlankListItemConverter}">
+            <Binding Path="EmptyUser" />
+            <Binding Path="Users" />
+            <Binding RelativeSource="{RelativeSource Self}" />
+          </MultiBinding>
+        </ListBox.ItemsSource>
+        <i:Interaction.Behaviors>
+          <local:Behaviour1 />
+        </i:Interaction.Behaviors>
+        <i:Interaction.Triggers>
+          <i:EventTrigger EventName="SelectionChanged">
+            <local:ClosePopupAction TargetName="userPopup" />
+          </i:EventTrigger>
+        </i:Interaction.Triggers>
+      </ListBox>
+    </Popup>
+  </DockPanel>
 </Window>

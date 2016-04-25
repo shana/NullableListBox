@@ -23,6 +23,19 @@ namespace NullableListBox
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContextChanged += (s, e) => ViewModel = e.NewValue as ViewModel;
+
+            DataContext = new ViewModel();
+        }
+
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+            "ViewModel", typeof(ViewModel), typeof(MainWindow), new PropertyMetadata(null));
+
+        public ViewModel ViewModel
+        {
+            get { return (ViewModel)GetValue(ViewModelProperty); }
+            set { SetValue(ViewModelProperty, value); }
         }
     }
 }
