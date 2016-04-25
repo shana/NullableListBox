@@ -68,36 +68,8 @@
 
   <DockPanel>
 
-    <Button DockPanel.Dock="Top" x:Name="userbutton" Style="{StaticResource ActionLinkButton}" Content="{Binding SelectedUser, Converter={local:DefaultValueConverter}, ConverterParameter=Users}">
-      <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-          <local:OpenPopupAction TargetName="userPopup" />
-        </i:EventTrigger>
-      </i:Interaction.Triggers>
-    </Button>
 
-    <Popup x:Name="userPopup"
-           AllowsTransparency="True"
-           Placement="Bottom"
-           PlacementTarget="{Binding ElementName=userbutton}"
-           StaysOpen="False">
-      <ListBox SelectedItem="{Binding SelectedUser}">
-        <ListBox.ItemsSource>
-          <MultiBinding Converter="{local:MultiBlankListItemConverter}">
-            <Binding Path="EmptyUser" />
-            <Binding Path="Users" />
-            <Binding RelativeSource="{RelativeSource Self}" />
-          </MultiBinding>
-        </ListBox.ItemsSource>
-        <i:Interaction.Behaviors>
-          <local:Behaviour1 />
-        </i:Interaction.Behaviors>
-        <i:Interaction.Triggers>
-          <i:EventTrigger EventName="SelectionChanged">
-            <local:ClosePopupAction TargetName="userPopup" />
-          </i:EventTrigger>
-        </i:Interaction.Triggers>
-      </ListBox>
-    </Popup>
+    <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
+    </ListBox>
   </DockPanel>
 </Window>
